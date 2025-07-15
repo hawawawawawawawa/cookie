@@ -6,3 +6,4 @@ answer = st.selectbox(
     "정답을 입력하세요",
     ["1", "2", "3", "4"]
 )
+if st.button('정답 확인') :
