@@ -8,6 +8,7 @@ answer = st.selectbox(
 )
 if st.button('정답 확인') :
     if answer == "1":
-        st.write("정답입니다! 😊")
+            st.title("정답")
+            st.write("정답입니다.")
     else :
          st.write("다시 한 번 생각해보세요")
