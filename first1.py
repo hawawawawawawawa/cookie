@@ -1,5 +1,6 @@
 import streamlit as st
 st.title('나의 첫 웹 서비스 만들기!!')
+st.latex(\frac{x}{y})
 name = st.text_input('이름을 입력해주세요 : ')
 menu = st.selectbox('좋아하는 음식을 선택해주세요:', ['냉모밀','쌀국수','돈까스','짜장면'])
 if st.button('인사말 생성') : 
