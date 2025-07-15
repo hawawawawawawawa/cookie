@@ -1,0 +1,4 @@
+import streamlit as st
+st.latex(r"""
+E = mc^2
+""")
