@@ -1,7 +1,7 @@
 import streamlit as st
 st.title('나의 첫 웹 서비스 만들기!!')
 st.latex(r"""
-\frac{x}{y}
+\lim{x \to \infity} {x*2+2x+a}^2
 """)
 name = st.text_input('이름을 입력해주세요 : ')
 menu = st.selectbox('좋아하는 음식을 선택해주세요:', ['냉모밀','쌀국수','돈까스','짜장면'])
