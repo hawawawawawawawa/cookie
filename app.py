@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import re
 
 # CSV 로드 함수
 @st.cache_data
@@ -27,19 +28,22 @@ top5 = df_age.sort_values("총인구수", ascending=False).head(5)
 age_data = top5.set_index("행정구역").drop(columns=["총인구수"])
 age_data = age_data.apply(pd.to_numeric, errors='coerce').transpose()
 
-# 인덱스 문자열에서 '100 이상'을 '100'으로 바꿔서 숫자 변환 시도
-if age_data.index.dtype == object:
-    try:
-        new_index = age_data.index.str.replace("100 이상", "100")
-        new_index = new_index.str.replace("세", "").astype(int)
-        age_data.index = new_index
-    except Exception as e:
-        st.error(f"인덱스 변환 오류 발생: {e}")
-        st.write("현재 인덱스 값:", age_data.index.tolist())
-else:
-    age_data.index = age_data.index.astype(int)
+# 숫자만 추출해서 인덱스로 변환 (숫자 변환 불가 구간 제외)
+def extract_age_number(label):
+    match = re.search(r'\d+', label)
+    if match:
+        return int(match.group())
+    else:
+        return None
 
-# 연령 순으로 정렬
+new_index = [extract_age_number(x) for x in age_data.index]
+
+# 숫자 없는 구간(예: None) 제외
+age_data = age_data.loc[[i is not None for i in new_index]]
+new_index = [i for i in new_index if i is not None]
+
+# 인덱스 숫자 대입 및 정렬
+age_data.index = new_index
 age_data = age_data.sort_index()
 
 # 시각화
