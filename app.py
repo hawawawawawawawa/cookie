@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+st.write("열 이름 목록:")
+st.write(df.columns.tolist())
 
 # CSV 파일 로딩
 @st.cache_data
