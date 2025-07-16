@@ -10,9 +10,6 @@ df = load_data()
 
 st.title("2025년 5월 기준 연령별 인구 현황 분석")
 
-# 열 이름 확인용 (선택적으로 주석 처리 가능)
-# st.write(df.columns.tolist())
-
 # 전처리
 region_col = "행정구역"
 total_col = "2025년05월_계_총인구수"
@@ -30,15 +27,23 @@ top5 = df_age.sort_values("총인구수", ascending=False).head(5)
 age_data = top5.set_index("행정구역").drop(columns=["총인구수"])
 age_data = age_data.apply(pd.to_numeric, errors='coerce').transpose()
 
-# 인덱스(연령)를 숫자로 변환 (예: "0세" -> 0)
-age_data.index = age_data.index.str.replace("세", "").astype(int)
+# 인덱스(연령)를 숫자로 변환
+if age_data.index.dtype == object:
+    try:
+        age_data.index = age_data.index.str.replace("세", "").astype(int)
+    except Exception as e:
+        st.error(f"인덱스 변환 오류 발생: {e}")
+        st.write("현재 인덱스 값:", age_data.index.tolist())
+else:
+    age_data.index = age_data.index.astype(int)
 
-# 정렬 (혹시 연령 순서가 안맞을 수 있으니 정렬)
+# 연령 순으로 정렬
 age_data = age_data.sort_index()
 
 # 시각화
 st.subheader("상위 5개 행정구역 연령별 인구 변화 (선 그래프)")
 st.line_chart(age_data)
+
 # 원본 데이터도 같이 보여주기
 st.subheader("원본 데이터 (일부)")
 st.dataframe(df.head(20))
