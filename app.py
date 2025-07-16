@@ -27,10 +27,12 @@ top5 = df_age.sort_values("총인구수", ascending=False).head(5)
 age_data = top5.set_index("행정구역").drop(columns=["총인구수"])
 age_data = age_data.apply(pd.to_numeric, errors='coerce').transpose()
 
-# 인덱스(연령)를 숫자로 변환
+# 인덱스 문자열에서 '100 이상'을 '100'으로 바꿔서 숫자 변환 시도
 if age_data.index.dtype == object:
     try:
-        age_data.index = age_data.index.str.replace("세", "").astype(int)
+        new_index = age_data.index.str.replace("100 이상", "100")
+        new_index = new_index.str.replace("세", "").astype(int)
+        age_data.index = new_index
     except Exception as e:
         st.error(f"인덱스 변환 오류 발생: {e}")
         st.write("현재 인덱스 값:", age_data.index.tolist())
