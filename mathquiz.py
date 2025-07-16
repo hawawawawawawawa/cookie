@@ -10,7 +10,8 @@ if "page" not in st.session_state:
     )
     if st.button('정답 확인') :
         if answer == "1":
-            if st.session_state.page == 1:
+            st.session_state.page = 2
+            if st.session_state.page == 2:
                 st.title("정답")
                 st.write("정답입니다.")
         else :
