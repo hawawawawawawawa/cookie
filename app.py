@@ -19,6 +19,9 @@ st.write(df.columns.tolist())
 st.subheader("원본 데이터")
 st.dataframe(df)
 
+df_age = df[["행정기관별", "총인구수 (명)"] + age_columns].copy()
+df_age.columns = ["행정기관", "총인구수"] + age_labels  # 내부적으로 이름 바꿔주기
+
 # 전처리
 age_columns = [col for col in df.columns if col.startswith("2025년05월_계_")]
 age_labels = [col.replace("2025년05월_계_", "") for col in age_columns]
