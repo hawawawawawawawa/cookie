@@ -22,10 +22,13 @@ else:
         if school_columns:
             df_melt = df.melt(id_vars='연도', value_vars=school_columns, var_name='항목', value_name='학생수')
 
+            # 여기서 연도를 문자열로 변환해서 카테고리 축으로 처리
+            df_melt['연도'] = df_melt['연도'].astype(str)
+
             fig = px.bar(
                 df_melt,
-                x='연도',        # 가로축을 '연도'로 변경
-                y='학생수',       # 세로축을 '학생수'로 변경
+                x='연도',
+                y='학생수',
                 color='항목',
                 barmode='group',
                 title='연도별 학급당 학생 수 (세로 막대 그래프)'
