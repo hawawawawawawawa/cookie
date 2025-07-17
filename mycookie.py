@@ -8,7 +8,7 @@ st.title("📊 연도별 학급당 학생 수 시각화")
 st.markdown("2025년 5월 기준 데이터를 기반으로 작성된 시각화입니다.")
 
 try:
-    df = pd.read_csv("년도별학급당학생수.csv", encoding='euc-kr')
+    df = pd.read_csv("년도별학급당학생수.csv", encoding='utf-8')
 except FileNotFoundError:
     st.error("년도별학급당학생수.csv 파일을 찾을 수 없습니다. 파일 위치를 확인해주세요.")
 except Exception as e:
