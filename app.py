@@ -49,11 +49,11 @@ m = folium.Map(location=[center_lat, center_lon], zoom_start=7)
 for _, row in map_df.iterrows():
     folium.CircleMarker(
         location=[row['lat'], row['lon']],
-        radius=7,               # 원 크기 작게 고정 (원하는 크기로 조절 가능)
+        radius=max(row['총인구수'] / 100000, 5),  # 최소 5, 인구수 비례 확대
         color='blue',
         fill=True,
         fill_color='blue',
-        fill_opacity=0.3,       # 반투명도 낮게 설정 (0~1 사이, 0에 가까울수록 투명)
+        fill_opacity=0.5,
         popup=f"{row['행정구역']}: {row['총인구수']:,}명"
     ).add_to(m)
 
