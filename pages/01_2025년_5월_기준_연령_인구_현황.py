@@ -1,61 +1,43 @@
 import streamlit as st
 import pandas as pd
-import folium
-from streamlit_folium import st_folium
 
-# CSV 로드 함수
-@st.cache_data
-def load_data():
-    return pd.read_csv("202505_202505_연령별인구현황_월간.csv", encoding="euc-kr")
+# CSV 파일 업로드
+st.title("2025년 5월 기준 연령별 인구 현황")
 
-df = load_data()
+#uploaded_file = st.file_uploader("CSV 파일을 업로드하세요 (EUC-KR 인코딩)", type="csv")
 
-st.title("2025년 5월 기준 연령별 인구 현황 분석")
+if True:
+    df = pd.read_csv("202505_202505_연령별인구현황_월간.csv", encoding='euc-kr')
 
-region_col = "행정구역"
-total_col = "2025년05월_계_총인구수"
-age_columns = [col for col in df.columns if col.startswith("2025년05월_계_") and "세" in col]
-age_labels = [col.replace("2025년05월_계_", "") for col in age_columns]
+    # 데이터 전처리
+    df['총인구수'] = df['2025년05월_계_총인구수'].str.replace(',', '').astype(int)
+    age_columns = [col for col in df.columns if col.startswith('2025년05월_계_') and ('세' in col or '100세 이상' in col)]
+    new_columns = []
+    for col in age_columns:
+        if '100세 이상' in col:
+            new_columns.append('100세 이상')
+        else:
+            new_columns.append(col.replace('2025년05월_계_', '').replace('세', '') + '세')
+    df_age = df[['행정구역', '총인구수'] + age_columns].copy()
+    df_age.columns = ['행정구역', '총인구수'] + new_columns
 
-df_age = df[[region_col, total_col] + age_columns].copy()
-df_age.columns = ["행정구역", "총인구수"] + age_labels
+    # 상위 5개 행정구역 추출
+    top5_df = df_age.sort_values(by='총인구수', ascending=False).head(5)
 
-# 상위 5개 행정구역 이름으로 필터 (직접 지정)
-selected_regions = ["경기도", "서울", "부산", "경상남도", "인천"]
-top5 = df_age[df_age["행정구역"].isin(selected_regions)].copy()
+    # 원본 데이터 출력
+    st.subheader("📊 원본 데이터 (상위 5개 행정구역)")
+    st.dataframe(top5_df)
 
-# 각 행정구역별 대표 위도, 경도 (대략적인 중심 좌표)
-location_data = {
-    "행정구역": ["서울", "경기도", "부산", "경상남도", "인천"],
-    "lat": [37.5665, 37.4138, 35.1796, 35.1796, 37.4563],
-    "lon": [126.9780, 127.5183, 129.0756, 128.6936, 126.7052]
-}
-loc_df = pd.DataFrame(location_data)
+    # 선그래프 출력
+    st.subheader("📈 상위 5개 행정구역 연령별 인구 변화")
+    age_columns_only = top5_df.columns[2:]
 
-# top5와 위치정보 병합
-map_df = pd.merge(top5, loc_df, on="행정구역", how="inner")
-
-# 지도 중심 좌표 설정 (중심점 평균)
-center_lat = map_df["lat"].mean()
-center_lon = map_df["lon"].mean()
-
-# folium 지도 생성
-m = folium.Map(location=[center_lat, center_lon], zoom_start=7)
-
-# 인구수에 따라 마커 원 크기 조절
-for _, row in map_df.iterrows():
-    folium.CircleMarker(
-        location=[row["lat"], row["lon"]],
-        radius=max(row["총인구수"] / 100000, 5),  # 최소 반경 5, 인구수에 비례 확대
-        color="blue",
-        fill=True,
-        fill_color="blue",
-        fill_opacity=0.5,
-        popup=f"{row['행정구역']}: {row['총인구수']:,}명"
-    ).add_to(m)
-
-st.subheader("상위 5개 행정구역 인구 분포 지도")
-st_folium(m, width=700, height=500)
-
-st.subheader("원본 데이터 (일부)")
-st.dataframe(df.head(20))
+    for index, row in top5_df.iterrows():
+        st.write(f"### {row['행정구역']}")
+        age_data = row[2:].astype(str).str.replace(',', '').astype(int)
+        age_df = pd.DataFrame({
+            '연령': age_columns_only,
+            '인구수': age_data.values
+        }).set_index('연령')
+        st.line_chart(age_df)
+얘랑 합쳐줘
