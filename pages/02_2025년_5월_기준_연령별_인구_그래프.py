@@ -20,14 +20,26 @@ region_coords = {
     '경상남도': [35.4606, 128.2132],
 }
 
-# 각 지역의 총인구수 (예시 데이터, 실제 값으로 수정 가능)
+# 각 지역의 총인구수 (숫자 타입)
 region_population = {
-    '서울특별시': '9,489,496명',
-    '경기도': '13,860,983명',
-    '인천광역시': '2,969,992명',
-    '부산광역시': '3,299,011명',
-    '경상남도': '3,235,581명'
+    '서울특별시': 9489496,
+    '경기도': 13860983,
+    '인천광역시': 2969992,
+    '부산광역시': 3299011,
+    '경상남도': 3235581
 }
+
+# 인구수 최대/최소값 추출
+pop_values = list(region_population.values())
+pop_min, pop_max = min(pop_values), max(pop_values)
+
+# radius 스케일링 함수 (인구수에 비례, 최소 8, 최대 30)
+def scale_radius(pop):
+    min_radius = 8
+    max_radius = 30
+    # 인구수 비율 (0~1)
+    ratio = (pop - pop_min) / (pop_max - pop_min)
+    return min_radius + ratio * (max_radius - min_radius)
 
 # 지도 중심을 서울로 설정
 m = folium.Map(location=[36.5, 127.5], zoom_start=7)
@@ -35,11 +47,12 @@ m = folium.Map(location=[36.5, 127.5], zoom_start=7)
 # 지도에 원 추가
 for region in top5:
     lat, lon = region_coords[region]
-    population = region_population.get(region, "인구 정보 없음")
-    popup_text = f"<b>{region}</b><br>총인구수: {population}"
+    pop = region_population.get(region, 0)
+    radius = scale_radius(pop)
+    popup_text = f"<b>{region}</b><br>총인구수: {pop:,}명"
     folium.CircleMarker(
         location=[lat, lon],
-        radius=15,
+        radius=radius,
         color='blue',
         fill=True,
         fill_color='blue',
