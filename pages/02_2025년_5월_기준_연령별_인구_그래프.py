@@ -1,52 +1,40 @@
 import streamlit as st
 import pandas as pd
 import folium
-from folium.plugins import MarkerCluster
 from streamlit_folium import st_folium
 
-# CSV 로드 함수
-@st.cache_data
-def load_data():
-    return pd.read_csv("202505_202505_연령별인구현황_월간.csv", encoding="euc-kr")
+st.set_page_config(page_title="2025년 5월 기준 연령별 인구 지도", layout="wide")
 
+st.title("2025년 5월 기준 연령별 인구 지도")
+st.write("상위 5개 지역(서울, 경기, 인천, 부산, 경상남도)을 지도에 표시합니다.")
 
-# 사용할 행정구역 필터링
-target_areas = ["경기도", "서울특별시", "부산광역시", "경상남도", "인천광역시"]
-df = df[df["행정구역"].isin(target_areas)]
+# 상위 5개 지역 목록
+top5 = ['서울특별시', '경기도', '인천광역시', '부산광역시', '경상남도']
 
-# 지역 중심 좌표 설정 (예시 좌표, 필요 시 조정)
-area_coords = {
-    "서울특별시": [37.5665, 126.9780],
-    "경기도": [37.4138, 127.5183],
-    "인천광역시": [37.4563, 126.7052],
-    "부산광역시": [35.1796, 129.0756],
-    "경상남도": [35.4606, 128.2132]
+# 각 지역의 위도, 경도 정보
+region_coords = {
+    '서울특별시': [37.5665, 126.9780],
+    '경기도': [37.4138, 127.5183],
+    '인천광역시': [37.4563, 126.7052],
+    '부산광역시': [35.1796, 129.0756],
+    '경상남도': [35.4606, 128.2132],
 }
 
-# 지도 중심점 계산
-center_lat = sum([area_coords[area][0] for area in target_areas]) / len(target_areas)
-center_lon = sum([area_coords[area][1] for area in target_areas]) / len(target_areas)
+# 지도 중심을 서울로 설정
+m = folium.Map(location=[36.5, 127.5], zoom_start=7)
 
-# 지도 생성
-m = folium.Map(location=[center_lat, center_lon], zoom_start=7)
-
-# 원 추가
-for _, row in df.iterrows():
-    area = row["행정구역"]
-    total_pop = row["2025년05월_계_총인구수"]
-    lat, lon = area_coords[area]
-
-    # 원 마커 생성
+# 지도에 원 추가
+for region in top5:
+    lat, lon = region_coords[region]
     folium.CircleMarker(
         location=[lat, lon],
         radius=15,
-        color="blue",
+        color='blue',
         fill=True,
-        fill_color="blue",
-        fill_opacity=0.4,
-        popup=f"{area}<br>총인구: {total_pop:,}명"
+        fill_color='blue',
+        fill_opacity=0.3,
+        popup=region
     ).add_to(m)
 
-# Streamlit에 지도 렌더링
-st.title("2025년 5월 기준 연령별 인구수")
-st_data = st_folium(m, width=700, height=500)
+# 지도 출력
+st_data = st_folium(m, width=800, height=600)
