@@ -5,7 +5,7 @@ st.set_page_config(page_title="연도별 학급당 학생 수", layout="wide")
 st.title("📊 연도별 학급당 학생 수 시각화")
 
 try:
-    df = pd.read_csv("년도별학급당학생수.csv", encoding='cp949')
+    df = pd.read_csv("년도별학급당학생수.csv", encoding='utf-8')
 except FileNotFoundError:
     st.error("년도별학급당학생수.csv 파일을 찾을 수 없습니다.")
 except Exception as e:
