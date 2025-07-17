@@ -22,7 +22,10 @@ else:
         if school_columns:
             df_melt = df.melt(id_vars='연도', value_vars=school_columns, var_name='항목', value_name='학생수')
 
-            # 여기서 연도를 문자열로 변환해서 카테고리 축으로 처리
+            # 초/중/고/유치원 항목만 필터링
+            target_categories = ['초', '중', '고', '유치원']
+            df_melt = df_melt[df_melt['항목'].isin(target_categories)]
+
             df_melt['연도'] = df_melt['연도'].astype(str)
 
             fig = px.bar(
@@ -31,7 +34,7 @@ else:
                 y='학생수',
                 color='항목',
                 barmode='group',
-                title='연도별 학급당 학생 수 (세로 막대 그래프)'
+                title='연도별 학급당 학생 수 (초/중/고/유치원)'
             )
             st.plotly_chart(fig, use_container_width=True)
         else:
