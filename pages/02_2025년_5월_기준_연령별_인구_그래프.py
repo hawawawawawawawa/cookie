@@ -4,8 +4,11 @@ import folium
 from folium.plugins import MarkerCluster
 from streamlit_folium import st_folium
 
-# CSV 파일 불러오기
-df = pd.read_csv("2025_05_population.csv", encoding="cp949")
+# CSV 로드 함수
+@st.cache_data
+def load_data():
+    return pd.read_csv("202505_202505_연령별인구현황_월간.csv", encoding="euc-kr")
+
 
 # 사용할 행정구역 필터링
 target_areas = ["경기도", "서울특별시", "부산광역시", "경상남도", "인천광역시"]
