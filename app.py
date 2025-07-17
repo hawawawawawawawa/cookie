@@ -17,7 +17,7 @@ st.title("2025년 5월 기준 연령별 인구 현황 분석")
 region_col = "행정구역"
 total_col = "2025년05월_계_총인구수"
 age_columns = [col for col in df.columns if col.startswith("2025년05월_계_") and "세" in col]
-age_labels = [col.replace("2025년05월_계_", "") for col in age_columns]
+age_labels = [col.replace("2025년05월_계_","") for col in age_columns]
 
 # 필요한 열만 추출
 df_age = df[[region_col, total_col] + age_columns].copy()
