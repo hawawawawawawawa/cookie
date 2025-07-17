@@ -24,7 +24,7 @@ df_age = df[[region_col, total_col] + age_columns].copy()
 df_age.columns = ["행정구역", "총인구수"] + age_labels  # 열 이름 재정의
 
 # 상위 5개 행정구역 추출
-top5 = df_age.sort_values("총인구수", ascending=False).head(5)
+top5 = df_age.sort_values("총인구수", ascending=False).head(3)
 
 # 연령별 인구만 추출 후 숫자 변환
 age_data = top5.set_index("행정구역").drop(columns=["총인구수"])
