@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 
 st.set_page_config(page_title="연도별 학급당 학생 수", layout="wide")
 st.title("📊 연도별 학급당 학생 수 시각화")
@@ -16,15 +17,23 @@ else:
         df = df.dropna(subset=['연도'])
         df['연도'] = df['연도'].astype(int)
 
-        # 예를 들어 '평균학급당학생수' 컬럼이 있다고 가정
-        if '평균학급당학생수' in df.columns:
-            df_chart = df.set_index('연도')['평균학급당학생수']
-            st.line_chart(df_chart)
+        school_columns = [col for col in df.columns if col != '연도']
+
+        if school_columns:
+            # melt를 이용해 긴 형식으로 변환 (연도, 변수명, 값)
+            df_melt = df.melt(id_vars='연도', value_vars=school_columns, var_name='항목', value_name='학생수')
+
+            fig = px.bar(
+                df_melt,
+                x='연도',
+                y='학생수',
+                color='항목',
+                barmode='group',  # 그룹별로 막대 나란히
+                title='연도별 학급당 학생 수(여러 항목)'
+            )
+            st.plotly_chart(fig, use_container_width=True)
         else:
-            # 여러 컬럼을 모두 사용
-            school_columns = [col for col in df.columns if col != '연도']
-            df_chart = df.set_index('연도')[school_columns]
-            st.line_chart(df_chart)
+            st.error("데이터에 '연도' 외 표시할 학생 수 컬럼이 없습니다.")
 
         st.markdown("✅ 데이터 출처: 2025년 5월 기준 교육 통계")
     else:
