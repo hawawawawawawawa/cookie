@@ -20,21 +20,20 @@ else:
         school_columns = [col for col in df.columns if col != '연도']
 
         if school_columns:
-            # melt를 이용해 긴 형식으로 변환 (연도, 변수명, 값)
             df_melt = df.melt(id_vars='연도', value_vars=school_columns, var_name='항목', value_name='학생수')
 
             fig = px.bar(
                 df_melt,
-                x='연도',
-                y='학생수',
-                color='항목',
-                barmode='group',  # 그룹별로 막대 나란히
-                title='연도별 학급당 학생 수(여러 항목)'
+                x='연도',          # 가로축: 연도
+                y='학생수',         # 세로축: 학생 수
+                color='항목',      # 컬럼별 색상 구분
+                barmode='group',   # 막대 그룹별 나란히 표시
+                title='연도별 학급당 학생 수'
             )
             st.plotly_chart(fig, use_container_width=True)
         else:
             st.error("데이터에 '연도' 외 표시할 학생 수 컬럼이 없습니다.")
-
+        
         st.markdown("✅ 데이터 출처: 2025년 5월 기준 교육 통계")
     else:
         st.error("데이터에 '연도' 컬럼이 없습니다.")
