@@ -24,17 +24,16 @@ else:
 
             fig = px.bar(
                 df_melt,
-                x='학생수',       # 가로 막대 길이
-                y='연도',         # 세로축(카테고리)
+                x='연도',        # 가로축을 '연도'로 변경
+                y='학생수',       # 세로축을 '학생수'로 변경
                 color='항목',
                 barmode='group',
-                orientation='h',  # 여기서 가로 막대 그래프 설정
-                title='연도별 학급당 학생 수 (가로 막대 그래프)'
+                title='연도별 학급당 학생 수 (세로 막대 그래프)'
             )
             st.plotly_chart(fig, use_container_width=True)
         else:
             st.error("데이터에 '연도' 외 표시할 학생 수 컬럼이 없습니다.")
-        
+
         st.markdown("✅ 데이터 출처: 2025년 5월 기준 교육 통계")
     else:
         st.error("데이터에 '연도' 컬럼이 없습니다.")
