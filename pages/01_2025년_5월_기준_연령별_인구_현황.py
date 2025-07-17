@@ -40,4 +40,3 @@ if True:
             '인구수': age_data.values
         }).set_index('연령')
         st.line_chart(age_df)
-얘랑 합쳐줘
