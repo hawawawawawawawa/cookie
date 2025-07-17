@@ -39,6 +39,15 @@ map_df = pd.merge(top5, loc_df, on="행정구역", how="inner")
 center_lat = map_df["lat"].mean()
 center_lon = map_df["lon"].mean()
 
+# NaN 제거 후 중심 좌표 계산
+valid_coords = df[['위도', '경도']].dropna()
+center_lat = valid_coords['위도'].mean()
+center_lon = valid_coords['경도'].mean()
+
+# folium 지도 생성
+m = folium.Map(location=[center_lat, center_lon], zoom_start=7)
+
+
 # folium 지도 생성
 m = folium.Map(location=[center_lat, center_lon], zoom_start=7)
 
