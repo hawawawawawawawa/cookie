@@ -17,13 +17,20 @@ else:
         df = df.dropna(subset=['연도'])
         df['연도'] = df['연도'].astype(int)
 
-        # '일반계고'와 '일반고' 합쳐서 '고등학교' 컬럼 생성
-        df['고등학교'] = df.get('일반계고', 0) + df.get('일반고', 0)
+        # '고등학교' 포함된 컬럼명 찾기
+        highschool_cols = [col for col in df.columns if '고등학교' in col]
 
-        # 그래프에 사용할 컬럼 리스트 지정 (초등학교, 중학교, 유치원, 고등학교)
+        # 해당 컬럼들 평균 내서 새 '고등학교' 컬럼 생성
+        if highschool_cols:
+            df['고등학교'] = df[highschool_cols].mean(axis=1)
+        else:
+            st.warning("고등학교 관련 컬럼을 찾지 못했습니다.")
+            df['고등학교'] = 0  # 없으면 0으로 초기화
+
+        # 그래프용 컬럼 리스트 (초/중/유치원 + 새로 만든 고등학교)
         selected_columns = ['초등학교', '중학교', '유치원', '고등학교']
 
-        # 실제 데이터에 없는 컬럼은 제외
+        # 실제 데이터에 존재하는 컬럼만 필터링
         selected_columns = [col for col in selected_columns if col in df.columns]
 
         if selected_columns:
@@ -40,7 +47,7 @@ else:
             )
             st.plotly_chart(fig, use_container_width=True)
         else:
-            st.error("필요한 컬럼이 데이터에 없습니다.")
+            st.error("그래프에 사용할 컬럼이 없습니다.")
 
         st.markdown("✅ 데이터 출처: 2025년 5월 기준 교육 통계")
     else:
