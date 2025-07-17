@@ -24,11 +24,12 @@ else:
 
             fig = px.bar(
                 df_melt,
-                x='연도',          # 가로축: 연도
-                y='학생수',         # 세로축: 학생 수
-                color='항목',      # 컬럼별 색상 구분
-                barmode='group',   # 막대 그룹별 나란히 표시
-                title='연도별 학급당 학생 수'
+                x='학생수',       # 가로 막대 길이
+                y='연도',         # 세로축(카테고리)
+                color='항목',
+                barmode='group',
+                orientation='h',  # 여기서 가로 막대 그래프 설정
+                title='연도별 학급당 학생 수 (가로 막대 그래프)'
             )
             st.plotly_chart(fig, use_container_width=True)
         else:
