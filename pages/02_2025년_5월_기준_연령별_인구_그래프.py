@@ -20,12 +20,23 @@ region_coords = {
     '경상남도': [35.4606, 128.2132],
 }
 
+# 각 지역의 총인구수 (예시 데이터, 실제 값으로 수정 가능)
+region_population = {
+    '서울특별시': '9,489,496명',
+    '경기도': '13,860,983명',
+    '인천광역시': '2,969,992명',
+    '부산광역시': '3,299,011명',
+    '경상남도': '3,235,581명'
+}
+
 # 지도 중심을 서울로 설정
 m = folium.Map(location=[36.5, 127.5], zoom_start=7)
 
 # 지도에 원 추가
 for region in top5:
     lat, lon = region_coords[region]
+    population = region_population.get(region, "인구 정보 없음")
+    popup_text = f"<b>{region}</b><br>총인구수: {population}"
     folium.CircleMarker(
         location=[lat, lon],
         radius=15,
@@ -33,7 +44,7 @@ for region in top5:
         fill=True,
         fill_color='blue',
         fill_opacity=0.3,
-        popup=region
+        popup=folium.Popup(popup_text, max_width=300)
     ).add_to(m)
 
 # 지도 출력
