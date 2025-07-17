@@ -17,15 +17,17 @@ else:
         df = df.dropna(subset=['연도'])
         df['연도'] = df['연도'].astype(int)
 
-        school_columns = [col for col in df.columns if col != '연도']
+        # '일반계고'와 '일반고' 합쳐서 '고등학교' 컬럼 생성
+        df['고등학교'] = df.get('일반계고', 0) + df.get('일반고', 0)
 
-        if school_columns:
-            df_melt = df.melt(id_vars='연도', value_vars=school_columns, var_name='항목', value_name='학생수')
+        # 그래프에 사용할 컬럼 리스트 지정 (초등학교, 중학교, 유치원, 고등학교)
+        selected_columns = ['초등학교', '중학교', '유치원', '고등학교']
 
-            # 초/중/고/유치원 항목만 필터링
-            target_categories = ['초', '중', '고', '유치원']
-            df_melt = df_melt[df_melt['항목'].isin(target_categories)]
+        # 실제 데이터에 없는 컬럼은 제외
+        selected_columns = [col for col in selected_columns if col in df.columns]
 
+        if selected_columns:
+            df_melt = df.melt(id_vars='연도', value_vars=selected_columns, var_name='항목', value_name='학생수')
             df_melt['연도'] = df_melt['연도'].astype(str)
 
             fig = px.bar(
@@ -38,7 +40,7 @@ else:
             )
             st.plotly_chart(fig, use_container_width=True)
         else:
-            st.error("데이터에 '연도' 외 표시할 학생 수 컬럼이 없습니다.")
+            st.error("필요한 컬럼이 데이터에 없습니다.")
 
         st.markdown("✅ 데이터 출처: 2025년 5월 기준 교육 통계")
     else:
